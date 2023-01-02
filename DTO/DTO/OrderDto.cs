@@ -11,7 +11,7 @@ namespace DTO.DTO
     {
         public int TableNo { get; set; }
         public decimal TotalPrice { get; set; }
-        public List<MenuDto> OrderList { get; set; }
+        public List<MenuDto> MenuList { get; set; }
         public bool IsPaid { get; set; }
     }
 }

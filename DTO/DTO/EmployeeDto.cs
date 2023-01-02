@@ -12,8 +12,9 @@ namespace DTO.DTO
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public decimal Salery { get; set; }
+        public string password { get; set;}
         public DateTime StartedDate { get; set; }
         public DateTime FinishDate { get; set; }
-        public string Role { get; set; }
+        public int RoleId { get; set; }
     }
 }

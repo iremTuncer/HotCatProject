@@ -1,6 +1,7 @@
 ﻿using DAL.Context;
 using Entity.Abstract;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace BLL.Repository
 {
@@ -17,6 +18,8 @@ namespace BLL.Repository
         {
             return _entities.Find(id);
         }
+
+        public T GetByDefault(Expression<Func<T, bool>> exp) => _context.Set<T>().FirstOrDefault(exp);
 
         public IEnumerable<T> GetAll()
         {

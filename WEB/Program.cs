@@ -1,7 +1,10 @@
 using DAL.Context;
 using Entity.Entity;
 using IOC;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using WEB.Externals;
 
 internal class Program
 {
@@ -12,13 +15,16 @@ internal class Program
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
-        //builder.Services.AddDbContext<HotCatDbContext>(options =>
-        //        options.UseSqlServer(Configuration.GetConnectionString("ConnectionStrings")));
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme) // Sets the default scheme to cookies
+            .AddCookie(options => options.LoginPath = "/login");
+
+        // claims transformation is run after every Authenticate call
+        builder.Services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
+
         builder.Services.AddDbContext<HotCatDbContext>(options =>
-    options.UseSqlServer("Server=LAPTOP-H0G4BUKB\\SQLEXPRESS;Database=HotCatDb;Integrated Security = True; trustServerCertificate=true"));
-        //builder.Services.AddIdentity<Employee, IdentityRole>()
-        //    .AddEntityFrameworkStores<ApplicationDbContext>()
-        //    .AddDefaultTokenProviders();
+options.UseSqlServer("Server=LAPTOP-H0G4BUKB\\SQLEXPRESS;Database=HotCatDb;Integrated Security = True; trustServerCertificate=true"));
+
+        builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         IOCContainer.ConfigureIoc(builder.Services);
         var app = builder.Build();
@@ -37,7 +43,7 @@ internal class Program
         app.UseStaticFiles();
 
         app.UseRouting();
-
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(

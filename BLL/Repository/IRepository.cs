@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +20,8 @@ namespace BLL.Repository
         void Update(T entity);
         //Get
         T Get(int id);
+
+        T GetByDefault(Expression<Func<T, bool>> exp);
         string SaveChanges();
     }
 }

@@ -88,6 +88,10 @@ namespace DAL.Migrations
                     b.Property<DateTime?>("ModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("RoleId")
                         .HasColumnType("int");
 
@@ -134,9 +138,6 @@ namespace DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -146,8 +147,6 @@ namespace DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("MenuCategoryId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("Menus");
                 });
@@ -257,14 +256,14 @@ namespace DAL.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
                     b.Property<int>("UnitInStock")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("unit")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -307,6 +306,34 @@ namespace DAL.Migrations
                     b.ToTable("Roles");
                 });
 
+            modelBuilder.Entity("Entity.Entity.SelectedMenu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitInPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("piece")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("SelectedMenus");
+                });
+
             modelBuilder.Entity("Entity.Entity.Employee", b =>
                 {
                     b.HasOne("Entity.Entity.Role", "Role")
@@ -322,10 +349,6 @@ namespace DAL.Migrations
                         .WithMany()
                         .HasForeignKey("MenuCategoryId");
 
-                    b.HasOne("Entity.Entity.Order", null)
-                        .WithMany("OrderList")
-                        .HasForeignKey("OrderId");
-
                     b.Navigation("MenuCategory");
                 });
 
@@ -336,20 +359,31 @@ namespace DAL.Migrations
                         .HasForeignKey("CategoryNameId");
 
                     b.HasOne("Entity.Entity.Menu", null)
-                        .WithMany("Recipe")
+                        .WithMany("ProductList")
                         .HasForeignKey("MenuId");
 
                     b.Navigation("CategoryName");
                 });
 
+            modelBuilder.Entity("Entity.Entity.SelectedMenu", b =>
+                {
+                    b.HasOne("Entity.Entity.Order", "Order")
+                        .WithMany("MenuList")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Entity.Entity.Menu", b =>
                 {
-                    b.Navigation("Recipe");
+                    b.Navigation("ProductList");
                 });
 
             modelBuilder.Entity("Entity.Entity.Order", b =>
                 {
-                    b.Navigation("OrderList");
+                    b.Navigation("MenuList");
                 });
 #pragma warning restore 612, 618
         }

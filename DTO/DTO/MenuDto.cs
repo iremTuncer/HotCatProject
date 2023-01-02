@@ -11,7 +11,7 @@ namespace DTO.DTO
     {
         public string Name { get; set; }
         public decimal UnitInPrice { get; set; }
-        public List<ProductDto> Recipe { get; set; }
+        public List<ProductDto> ProductList { get; set; }
         
         public int? MenuCategoryId { get; set; }
     }

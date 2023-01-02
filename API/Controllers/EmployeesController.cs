@@ -1,9 +1,9 @@
 ﻿using BLL.IService;
-using BLL.Service;
+using BLL.Repository;
 using DTO.DTO;
 using Entity.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace API.Controllers
 {
@@ -12,9 +12,26 @@ namespace API.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
-        public EmployeesController(IEmployeeService employeeService)
+        private readonly IRepository<Employee> _employeeRepository;
+        public EmployeesController(IEmployeeService employeeService, IRepository<Employee> employeeRepository)
         {
             _employeeService = employeeService;
+            _employeeRepository = employeeRepository;
+        }
+
+        [HttpPost]
+        [Route ("LoginValid")]
+        public ActionResult<string> Login(string userName, string password)
+        {
+            if (!string.IsNullOrEmpty(userName)&&!string.IsNullOrEmpty(password))
+            {
+                var user =_employeeRepository.GetByDefault(x => x.FirstName == userName && x.Password == password);
+
+                if (user != null) return Ok(user.Id);
+            }
+            
+            return StatusCode(500);
+            
         }
 
         [HttpGet]
@@ -38,7 +55,7 @@ namespace API.Controllers
                     employeeDto.Salery = employee.Salery;
                     employeeDto.StartedDate = employee.StartedDate;
                     employeeDto.FinishDate = employee.FinishDate;
-                    employeeDto.Role = employee.Role.RoleName;
+                    employeeDto.RoleId = employee.RoleId.Value;
                     employees.Add(employeeDto);
                 }
                 return Ok(employees);
@@ -63,7 +80,8 @@ namespace API.Controllers
                     Salery = employeeDto.Salery,
                     StartedDate = employeeDto.StartedDate,
                     FinishDate = employeeDto.FinishDate,
-                    
+                    RoleId = employeeDto.RoleId,
+                    Password =employeeDto.password
                     
                 };
 
@@ -96,7 +114,7 @@ namespace API.Controllers
                 employeeDto.Salery = employee.Salery;
                 employeeDto.StartedDate = employee.StartedDate;
                 employeeDto.FinishDate = employee.FinishDate;
-                employeeDto.Role = employee.Role.RoleName;
+                employeeDto.RoleId = employee.Role.Id;
 
                 return Ok(employee);
             }
@@ -123,7 +141,7 @@ namespace API.Controllers
                     Salery = employeeDto.Salery,
                     StartedDate = employeeDto.StartedDate,
                     FinishDate = employeeDto.FinishDate,
-                    
+                    RoleId = employeeDto.RoleId
                 };
                 _employeeService.UpdateEmployee(employee);
                 return Ok("Kayıt başarılı!");
@@ -151,6 +169,7 @@ namespace API.Controllers
                     Salery = employeeDto.Salery,
                     StartedDate = employeeDto.StartedDate,
                     FinishDate = employeeDto.FinishDate,
+                    RoleId = employeeDto.RoleId
                 };
                 _employeeService.DeleteEmployee(employee);
                 return Ok("Silme başarılı!");

@@ -37,16 +37,14 @@ namespace API.Controllers
                     orderDto.TotalPrice = order.TotalPrice;
                     orderDto.IsPaid = order.IsPaid;
                     List<MenuDto> menu = new List<MenuDto>();
-                    foreach (var item in order.OrderList)
+                    foreach (var item in order.MenuList)
                     {
                         MenuDto menuDto = new MenuDto();
                         menuDto.Name = item.Name;
                         menuDto.UnitInPrice = item.UnitInPrice;
-                        menuDto.MenuCategoryId = item.MenuCategoryId;
-                        menuDto.Id = item.Id;
                         menu.Add(menuDto);
                     }
-                    orderDto.OrderList = menu;
+                    orderDto.MenuList = menu;
                     orders.Add(orderDto);
                 }
                 
@@ -97,16 +95,14 @@ namespace API.Controllers
                 orderDto.TableNo = order.TableNo;
                 orderDto.TotalPrice = order.TotalPrice;
                 List<MenuDto> menu = new List<MenuDto>();
-                foreach (var item in order.OrderList)
+                foreach (var item in order.MenuList)
                 {
                     MenuDto menuDto = new MenuDto();
                     menuDto.Name = item.Name;
                     menuDto.UnitInPrice = item.UnitInPrice;
-                    menuDto.MenuCategoryId = item.MenuCategoryId;
-                    menuDto.Id = item.Id;
                     menu.Add(menuDto);
                 }
-                orderDto.OrderList = menu;
+                orderDto.MenuList = menu;
                 return Ok(order);
             }
             catch (Exception ex)
@@ -123,12 +119,12 @@ namespace API.Controllers
                 var savedorder = GetById(orderDto.Id);
                 if (savedorder == NotFound())
                     return NotFound("Aradığınız değere ait kayıt bulunamadı!");
-                List<Menu> menuList = new List<Menu>();
-                foreach (var item in orderDto.OrderList)
+                List<SelectedMenu> menuList = new List<SelectedMenu>();
+                foreach (var item in orderDto.MenuList)
                 {
-                    Menu menu = new Menu();
+                    SelectedMenu menu = new SelectedMenu();
                     menu.Name = item.Name;
-                    menu.Id = item.Id;
+                    menu.UnitInPrice = item.UnitInPrice;
                     menuList.Add(menu);
                 }
                 Order order = new Order()
@@ -137,7 +133,7 @@ namespace API.Controllers
                     TableNo = orderDto.TableNo,
                     TotalPrice = orderDto.TotalPrice,
                     IsPaid = orderDto.IsPaid,
-                    OrderList = menuList
+                    MenuList = menuList
                 };
                 _orderService.UpdateOrder(order);
                 return Ok("Kayıt başarılı!");

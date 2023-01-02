@@ -11,11 +11,12 @@ namespace Entity.Entity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string Password { get; set; }
         public decimal Salery { get; set; }
         public DateTime StartedDate { get; set; }
         public DateTime FinishDate { get; set; }
         public bool ActiveWork { get; set; }
-        public Role Role { get; set; }
+        public virtual Role Role { get; set; }
         public int? RoleId { get; set; }
     }
 }

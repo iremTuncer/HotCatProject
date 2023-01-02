@@ -1,8 +1,11 @@
 ﻿using BLL.IService;
 using BLL.Repository;
+using DAL.Context;
 using Entity.Entity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +15,12 @@ namespace BLL.Service
     public class OrderService : IOrderService
     {
         private readonly IRepository<Order> _orderService;
-        public OrderService(IRepository<Order> orderService)
+        private readonly HotCatDbContext _context;
+
+        public OrderService(IRepository<Order> orderService, HotCatDbContext context)
         {
             _orderService = orderService;
+            _context = context;
         }
         public void AddOrder(Order order)
         {
@@ -28,7 +34,16 @@ namespace BLL.Service
 
         public IEnumerable<Order> GetAllOrders()
         {
-            return _orderService.GetAll().ToList();
+            var orders = _orderService.GetAll().ToList();
+
+            var selectedMenus = _context.SelectedMenus;
+
+            foreach (var item in orders)
+            {
+                var itemMenus = selectedMenus.Where(x => x.Order.Id == item.Id).ToList();
+            }
+
+            return orders;
         }
 
         public Order GetOrderById(int id)

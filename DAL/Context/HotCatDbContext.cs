@@ -15,7 +15,7 @@ namespace DAL.Context
         //    if (!optionsBuilder.IsConfigured)
         //    {
         //        optionsBuilder.UseSqlServer("Server=LAPTOP-H0G4BUKB\\SQLEXPRESS;Database=HotCatDb;Integrated Security = True; trustServerCertificate=true");
-        //   }
+        //    }
         //    base.OnConfiguring(optionsBuilder);
         //}
         public DbSet<Role> Roles { get; set; }
@@ -25,6 +25,7 @@ namespace DAL.Context
         public DbSet<Menu> Menus { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<SelectedMenu> SelectedMenus { get; set; }
 
     }
 }

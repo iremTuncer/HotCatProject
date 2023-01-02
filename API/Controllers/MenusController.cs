@@ -5,6 +5,7 @@ using DTO.DTO;
 using Entity.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -23,7 +24,7 @@ namespace API.Controllers
         {
             try
             {
-                var AllMenus = _menuService.GetAllMenus();
+                List<Menu> AllMenus = _menuService.GetAllMenus().ToList();
                 if (AllMenus == null)
                 {
 
@@ -38,8 +39,9 @@ namespace API.Controllers
                     menuDto.UnitInPrice = menu.UnitInPrice;
                     menuDto.MenuCategoryId = menu.MenuCategoryId;
 
+                    if (!menu.ProductList.IsNullOrEmpty()) { 
                     List<ProductDto> productListDto = new List<ProductDto>();
-                    foreach (var item in menu.Recipe)
+                    foreach (var item in menu.ProductList)
                     {
                         ProductDto productDto = new ProductDto();
                         productDto.Id = item.Id;
@@ -47,7 +49,8 @@ namespace API.Controllers
                         productDto.UnitInStock = item.UnitInStock;
                         productListDto.Add(productDto);
                     }
-                    menuDto.Recipe = productListDto;
+                    menuDto.ProductList = productListDto;
+                    }
                     menuListDto.Add(menuDto);
                 }
                 return Ok(menuListDto);
@@ -65,7 +68,7 @@ namespace API.Controllers
             try
             {
                 List<Product> productListDto = new List<Product>();
-                foreach (var item in menuDto.Recipe)
+                foreach (var item in menuDto.ProductList)
                 {
                     Product product = new Product();
                     product.Id = item.Id;
@@ -81,8 +84,8 @@ namespace API.Controllers
                     Id = 0,
                     Name = menuDto.Name,
                     UnitInPrice = menuDto.UnitInPrice,
-                    MenuCategoryId = menuDto.MenuCategoryId,
-                    Recipe = productListDto,
+                    MenuCategoryId = menuDto.MenuCategoryId.Value,
+                    ProductList = productListDto,
                 };
                 if (menu.Id == null)
                     return BadRequest();
@@ -105,7 +108,7 @@ namespace API.Controllers
                     return NotFound();
                 var menu = _menuService.GetMenuById(id);
                 List<ProductDto> productListDto = new List<ProductDto>();
-                foreach (var item in menu.Recipe)
+                foreach (var item in menu.ProductList)
                 {
                     ProductDto productDto = new ProductDto();
                     productDto.Id = item.Id;
@@ -119,7 +122,7 @@ namespace API.Controllers
                     Name = menu.Name,
                     UnitInPrice = menu.UnitInPrice,
                     MenuCategoryId = menu.MenuCategoryId,
-                    Recipe = productListDto
+                    ProductList = productListDto
                 };
                 return Ok(menuDto);
             }
@@ -138,13 +141,14 @@ namespace API.Controllers
                 if (savedmenu == NotFound())
                     return NotFound("Aradığınız değere ait kayıt bulunamadı!");
                 List<Product> productListDto = new List<Product>();
-                foreach (var item in menuDto.Recipe)
+                foreach (var item in menuDto.ProductList)
                 {
                     Product product = new Product();
                     product.Id = item.Id;
                     product.ProductName = item.ProductName;
                     product.UnitInStock = item.UnitInStock;
                     product.UnitPrice = item.UnitPrice;
+                    
                     product.CategoryNameId = item.CategoryNameId;
                     productListDto.Add(product);
 
@@ -154,8 +158,8 @@ namespace API.Controllers
                     Id = menuDto.Id,
                     Name = menuDto.Name,
                     UnitInPrice = menuDto.UnitInPrice,
-                    MenuCategoryId = menuDto.MenuCategoryId,
-                    Recipe = productListDto,
+                    MenuCategoryId = menuDto.MenuCategoryId.Value,
+                    ProductList = productListDto,
                 };
                 _menuService.UpdateMenu(menu);
                 return Ok("Kayıt başarılı!");
@@ -180,7 +184,7 @@ namespace API.Controllers
                     Id = menuDto.Id,
                     Name = menuDto.Name,
                     UnitInPrice = menuDto.UnitInPrice,
-                    MenuCategoryId = menuDto.MenuCategoryId,
+                    MenuCategoryId = menuDto.MenuCategoryId.Value,
                   
                 };
                 _menuService.DeleteMenu(menu);

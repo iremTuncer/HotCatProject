@@ -1,11 +1,6 @@
 ﻿using BLL.IService;
 using BLL.Repository;
 using Entity.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Service
 {
@@ -19,7 +14,16 @@ namespace BLL.Service
         }
         public void AddMenu(Menu menu)
         {
-            _menuService.Insert(menu);
+            try
+            {
+                _menuService.Insert(menu);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex.InnerException;
+            }
+           
         }
 
         public void DeleteMenu(Menu menu)
@@ -29,7 +33,7 @@ namespace BLL.Service
 
         public IEnumerable<Menu> GetAllMenus()
         {
-            return _menuService.GetAll().ToList();
+            return _menuService.GetAll();
         }
 
         public Menu GetMenuById(int id)

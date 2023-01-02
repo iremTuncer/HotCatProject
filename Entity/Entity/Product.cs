@@ -11,7 +11,7 @@ namespace Entity.Entity
     public class Product:BaseEntity
     {
         public string ProductName { get; set; }
-        public Category CategoryName { get; set; }
+        public virtual Category CategoryName { get; set; }
         public int? CategoryNameId { get; set; }
         public int UnitInStock { get; set; }
         public decimal UnitPrice { get; set; }
